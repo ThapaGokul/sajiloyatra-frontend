@@ -54,6 +54,7 @@ export default async function Home() {
     // This catches network errors (rare for internal fetch) or the JSON parse error.
     console.error("Internal fetch or JSON parse failure during story fetch:", error);
   }
+  console.log("Stories Count:", storiesData.length, "First Story ID:", storiesData[0]?.id);
 
   return (
     <main>
