@@ -1,0 +1,38 @@
+/* [CSS MODULE] /src/components/Footer.module.css */
+.footer {
+  background-color: #2c3e50;
+  color: white;
+  padding: 50px 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  text-align: center;
+}
+
+.column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.column h3 {
+  margin-top: 0;
+  color: #ecf0f1;
+}
+
+.column a {
+  color: #bdc3c7;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.column a:hover {
+  color: white;
+}

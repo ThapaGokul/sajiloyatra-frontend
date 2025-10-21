@@ -1,0 +1,42 @@
+/* [CSS] /src/app/globals.css */
+
+/* Make sure the main containers fill the screen height */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f9f9f9;
+  font-family: var(--font-lato);
+}
+
+/* Turn the body into a vertical column */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%; /* Ensures body is at least as tall as the viewport */
+}
+
+/* This is the magic! Tell the main content area to grow and take up all available space. */
+main {
+  flex-grow: 1;
+}
+
+/* 2. Set the heading font for all heading levels */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-montserrat);
+}
+
+/* Add to the bottom of /src/app/globals.css */
+h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 40px;
+  text-align: center;
+}
+a {
+  text-decoration: none;
+}

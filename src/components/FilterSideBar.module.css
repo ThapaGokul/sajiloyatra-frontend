@@ -1,0 +1,17 @@
+.sidebar {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+.filterGroup h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+.filterOption {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.filterOption input {
+  margin-right: 10px;
+}

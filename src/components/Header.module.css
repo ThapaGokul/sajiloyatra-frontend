@@ -1,0 +1,177 @@
+/* [CSS MODULE] /src/components/Header.module.css */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  
+  /* We remove padding and flex here, as it's now just a container */
+}
+
+.logoLink {
+  display: flex; /* Helps align the image within the link */
+  align-items: center;
+  height: 40px; /* Match the logo's height for consistency */
+  transition: opacity 0.3s ease;
+  z-index: 1001; /* Ensure logo is on top */
+}
+
+
+.logoLink img {
+  /* No specific styles needed here, Next.js Image handles scaling */
+}
+
+/* The new top utility bar */
+.utilityNav {
+  width: 100%;
+  padding: 8px 0px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  font-size: 0.8rem;
+  background-color: #1a1a1a;
+  transition: background-color 0.3s ease;
+  
+}
+
+.utilityNav a {
+  color: #f0f0f0;
+  text-decoration: none;
+  margin-right: 12px;
+}
+
+/* The main navigation bar below the utility bar */
+.mainNav {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0px;
+}
+
+/* --- Solid State Adjustments --- */
+.solid {
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.solid .utilityNav {
+  background-color: #2c2c2c;
+}
+.solid .utilityNav a {
+  color: white;
+}
+.solid .title,
+.solid .nav a {
+  color: #333;
+}
+.solid .hamburger rect {
+  fill: #333;
+}
+
+/* In Header.module.css, replace your .title rule with this new .logo rule */
+
+.logo {
+   display: flex;
+  align-items: center; /* Vertically align icon and text block */
+  gap: 10px; /* Space between icon and text block */
+  text-decoration: none; /* Ensure no underline */
+  color: white; /* Default color for the whole logo */
+  transition: color 0.3s ease;
+  z-index: 1001;
+}
+
+/* Styles for the container holding "SAJILO" and "YATRA" */
+.logoText {
+  display: flex;
+  flex-direction: column; /* Stacks the two spans vertically */
+  line-height: 1.1; /* Adjust line spacing for stacked text */
+}
+
+.logoText span:first-child {
+  font-family: var(--font-montserrat);
+  font-size: 1.4rem; /* Larger font for SAJILO */
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.logoText span:last-child {
+  font-family: var(--font-lato); /* Different font for YATRA */
+  font-size: 0.8rem; /* Smaller font for YATRA */
+  font-weight: 400;
+  letter-spacing: 2px; /* Wider letter spacing for YATRA */
+  text-transform: uppercase; /* All caps for YATRA */
+}
+
+
+/* We can now style the SVG icon directly */
+.logo svg {
+  transition: color 0.3s ease;
+}
+
+/* --- UPDATE THE SOLID STATE RULES --- */
+/* Find the .solid .title rule and rename/replace it with these two rules */
+
+.solid .logo {
+  color: #2c3e50; /* A professional dark blue/grey */
+}
+
+/* This makes sure the icon also changes color when scrolled */
+.solid .logo svg {
+  color: #2c3e50;
+}
+.nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+  flex-shrink: 0;
+}
+.hamburger rect {
+  fill: white;
+  transition: fill 0.3s ease;
+}
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+  }
+  .utilityNav {
+    display: none; /* Hide the top bar on mobile for simplicity */
+  }
+  .mainNav {
+    padding: 15px 20px;
+  }
+  .nav.open {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    position: absolute;
+    top: 65px;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  .nav.open a {
+    color: #333;
+    margin: 10px 0;
+    font-size: 1.2rem;
+  }
+  .hamburger {
+    display: block;
+    padding-right: 30px;
+  }
+}

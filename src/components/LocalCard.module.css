@@ -1,0 +1,21 @@
+.card {
+  background: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  text-align: center;
+  padding: 20px;
+  max-width: 300px;
+}
+.image {
+  border-radius: 50%; /* Makes the image a circle */
+  object-fit: cover;
+}
+.name {
+  margin-top: 16px;
+  margin-bottom: 4px;
+  font-size: 1.25rem;
+  color: #333;
+}
+.specialty {
+  color: #777;
+}

@@ -1,0 +1,45 @@
+// [PRISMA SCHEMA] /prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Our database blueprint for what a "Trek" looks like
+model Trek {
+  id          Int     @id @default(autoincrement())
+  title       String
+  duration    Int
+  difficulty  String
+  description String
+}
+
+model Story {
+  id       Int    @id @default(autoincrement())
+  title    String
+  author   String
+  imageUrl String
+}
+model Lodging {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String
+  imageUrl    String
+  area        String
+  bookings    Booking[]
+}
+model Booking {
+  id         Int      @id @default(autoincrement())
+  checkIn    DateTime
+  checkOut   DateTime
+  guestName  String   // We'll use this instead of a full User model for simplicity
+  guestEmail String
+  
+  // Relation to Lodging
+  lodgingId  Int
+  lodging    Lodging  @relation(fields: [lodgingId], references: [id])
+}

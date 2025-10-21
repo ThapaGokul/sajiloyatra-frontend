@@ -1,0 +1,86 @@
+/* [CSS MODULE] /src/components/InfoSection.module.css */
+.section {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 80px 40px;
+  background-color: #ffffff;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.textColumn {
+  flex: 1;
+  min-width: 300px;
+}
+
+.imageColumn {
+  flex: 1;
+  position: relative; /* This is the 'anchor' for the overlapping image */
+  min-height: 450px;
+}
+
+.primaryImage {
+  border-radius: 8px;
+}
+
+.secondaryImage {
+  position: absolute; /* This 'un-sticks' the image */
+  bottom: -30px; /* Position it relative to the anchor */
+  left: -50px;
+  width: 220px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 5px solid white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-top: 0;
+}
+
+.buttonContainer {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #8B0000; /* A deep red color */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+/* Add to InfoSection.module.css */
+@media (max-width: 768px) {
+  .section {
+    flex-direction: column;
+  }
+}
+
+/* Add this to the bottom of InfoSection.module.css */
+
+@media (max-width: 768px) {
+  .section {
+    /* Stack the text and image columns vertically */
+    flex-direction: column;
+  }
+
+  .imageColumn {
+    min-height: 300px;
+    width: 100%;
+  }
+
+  .secondaryImage {
+    /* Change from absolute to relative to put it back in the normal flow */
+    position: relative;
+    left: auto;
+    bottom: auto;
+    /* Use margin to pull it up slightly and center it */
+    margin: -80px auto 0 auto;
+    display: block;
+  }
+}
