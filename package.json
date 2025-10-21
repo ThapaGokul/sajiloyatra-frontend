@@ -11,7 +11,6 @@
     "clean": "rimraf .next"
   },
   "dependencies": {
-    "@prisma/client": "^6.17.1",
     "axios": "^1.12.2",
     "next": "15.5.4",
     "react": "19.1.0",
@@ -22,6 +21,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@prisma/client": "^6.17.1",
     "dotenv-cli": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
