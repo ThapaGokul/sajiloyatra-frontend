@@ -4,7 +4,18 @@ import { PrismaClient } from '@prisma/client';
 import { Resend } from 'resend';
 
 const prisma = new PrismaClient();
-const resend = new Resend(process.env.RESEND_API_KEY);
+
+const resendApiKey = process.env.RESEND_API_KEY;
+
+// 2. Add a check to ensure the key exists before initializing
+if (!resendApiKey) {
+    // This should ideally never happen in production, but guards against build-time failures
+    console.error("RESEND_API_KEY is not set.");
+    // Return a dummy object or throw a descriptive error if you must
+    // but the next step is usually enough.
+}
+
+const resend = new Resend(resendApiKey);
 
 export async function POST(request) {
   try {
