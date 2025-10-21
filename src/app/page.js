@@ -8,13 +8,24 @@ import SeasonalGuide from '../components/SeasonalGuide';
 import StoryCard from '../components/StoryCard';
 import InfoSection from '../components/InfoSection';
 
+const getBaseUrl = () => {
+  // 1. Check for the VERCEL_URL (production/preview)
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  // 2. Fallback for local development
+  return 'http://localhost:3000'; 
+}
+
 // 1. Make the component async
 export default async function Home() {
   
-  // ✅ FIX: Use a relative path to fetch from the local Next.js Route Handler
-  const fetchUrl = '/api/stories';
+  const baseUrl = getBaseUrl(); // Get the correct base URL
+  
+  // ✅ FIX: Construct the full, absolute URL
+  const fetchUrl = `${baseUrl}/api/stories`;
 
-  let storiesData = []; // Initialize data as an empty array
+  let storiesData = [];
 
   // 2. Fetch the data from our API on the server
   try {
