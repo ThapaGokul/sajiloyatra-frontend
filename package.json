@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npx prisma generate && next build",
+    "db:seed": "node -r dotenv/config prisma/seed.js",
     "start": "next start",
     "db:deploy": "node -r dotenv/config node_modules/prisma/build/index.js migrate deploy --preview-feature",
     "lint": "eslint",
