@@ -19,7 +19,7 @@ export default async function Home() {
   // 2. Fetch the data from our API on the server
   try {
     const storiesResponse = await fetch(fetchUrl, { 
-      cache: 'no-store',
+      next: { revalidate: 60}
       // Add a timeout for robustness if needed, but not required here
     });
 
