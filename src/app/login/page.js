@@ -55,7 +55,7 @@ export default function LoginPage() {
           {message && <p style={{ textAlign: 'center', marginTop: '20px', color: 'red' }}>{message}</p>}
 
           <p style={{ marginTop: '20px', textAlign: 'center' }}>
-            Don't have an account? <Link href="/register" style={{ color: '#3498db' }}>Sign Up</Link>
+            Don&apos;t have an account? <Link href="/register" style={{ color: '#3498db' }}>Sign Up</Link>
           </p>
         </form>
       </div>

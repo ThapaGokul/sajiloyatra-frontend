@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 
 // --- API Keys & Configuration ---
 const geoapifyApiKey = 'e5f65d4f31d644a2a95d5f40af88b6de';
@@ -34,7 +35,7 @@ const StyleInjector = () => (
 
 const DestinationCard = ({ name, location, imageUrl }) => (
     <div className="dest-card">
-        <img src={imageUrl} alt={name} className="dest-card-img" />
+        <Image src={imageUrl} alt={name} className="dest-card-img" />
         <div className="dest-card-content">
             <h3>{name}</h3><p>{location}</p>
         </div>
