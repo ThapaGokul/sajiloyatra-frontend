@@ -12,7 +12,7 @@ import InfoSection from '../components/InfoSection';
 // 1. Make the component async
 export default async function Home() {
   // 2. Fetch the data from our API on the server
-  const storiesResponse = await fetch('http://localhost:3000/api/stories', { cache: 'no-store' });
+  const storiesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stories`, { cache: 'no-store' });
   const storiesData = await storiesResponse.json();
   return (
     <main>
