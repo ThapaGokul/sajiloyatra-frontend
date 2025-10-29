@@ -3,14 +3,14 @@ import Image from 'next/image';
 import { PrismaClient } from '@prisma/client';
 import styles from './lodgingDetail.module.css';
 import BookingWidget from '../../../components/BookingWidget';
- // We will create this file
+import PageHeader from '../../../components/PageHeader'; // <-- 1. IMPORT THE HEADER
 
 const prisma = new PrismaClient();
 
 async function getLodging(id) {
   const lodging = await prisma.lodging.findUnique({
     where: {
-      id: parseInt(id), // Convert the ID from the URL (string) to an integer
+      id: parseInt(id),
     },
   });
   return lodging;
@@ -24,22 +24,28 @@ export default async function LodgingDetailPage({ params }) {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.imageContainer}>
-        <Image
-          src={lodging.imageUrl}
-          alt={lodging.name}
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
-      </div>
-      <div className={styles.content}>
-        <h1 className={styles.title}>{lodging.name}</h1>
-        <p className={styles.area}>{lodging.area}</p>
-        <p className={styles.description}>{lodging.description}</p>
+    // We can use a simple <div> here, no specific class needed
+    <div>
+      {/* 2. ADD THE PAGE HEADER AT THE TOP */}
+      <PageHeader
+        imageUrl={lodging.imageUrl}
+        title={lodging.name}
+        description={lodging.area} // Use the area as the short description
+      />
+
+      {/* 3. THIS IS THE CONTENT BELOW THE HEADER */}
+      <div className={styles.container}>
+        {/* The image is now in the header, so we remove the old imageContainer */}
         
-        <BookingWidget lodgingId={lodging.id} />
+        {/* 4. CLEAN UP THE CONTENT DIV */}
+        <div className={styles.mainContent}>
+          <h2 className={styles.subTitle}>About {lodging.name}</h2>
+          <p className={styles.description}>{lodging.description}</p>
+        </div>
+
+        <div className={styles.sidebar}>
+          <BookingWidget lodgingId={lodging.id} />
+        </div>
       </div>
     </div>
   );

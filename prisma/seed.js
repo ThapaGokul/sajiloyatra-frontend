@@ -3,6 +3,32 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // We copy our trek data here for the seed script
+const guidesData = [
+  {
+    name: 'Rinzi Sherpa',
+    location: 'Kathmandu',
+    bio: 'Your friendly guide to the hidden temples and vibrant markets of the city.',
+    imageUrl: '/images/guide1.jpg',
+    specialty: 'City & History Tours',
+    type: 'PROFESSIONAL'
+  },
+  {
+    name: 'Sonam Tamang',
+    location: 'Pokhara',
+    bio: 'Let me show you the best views of the Annapurnas and the most peaceful spots by the lake.',
+    imageUrl: '/images/guide2.jpg',
+    specialty: 'Trekking & Nature',
+    type: 'PROFESSIONAL'
+  },
+  {
+    name: 'Anjali Gurung',
+    location: 'Chitwan',
+    bio: 'Passionate about wildlife and conservation. I’ll help you spot rhinos and tigers!',
+    imageUrl: '/images/guide3.jpg',
+    specialty: 'Wildlife Safari',
+    type: 'PROFESSIONAL'
+  },
+];
 const treksData = [
   { id: 1, title: 'Everest Base Camp', duration: 14, difficulty: 'Challenging', description: 'The classic trek to the foot of the world\'s highest mountain.' },
   { id: 2, title: 'Poon Hill', duration: 5, difficulty: 'Easy', description: 'A short and scenic trek with stunning sunrise views of the Annapurnas.' },
@@ -37,9 +63,9 @@ async function main() {
         description: trek.description,
       },
     });
-}
+  }
 
-      // Add this new loop for stories
+  // Add this new loop for stories
   for (const story of storiesData) {
     await prisma.story.create({
       data: {
@@ -51,12 +77,21 @@ async function main() {
   }
 
   for (const lodging of lodgingsData) {
-  await prisma.lodging.create({
-    data: lodging,
-  });
-}
+    await prisma.lodging.create({
+      data: lodging,
+    });
+  }
+
+  // ADD THIS NEW LOOP
+  for (const guide of guidesData) {
+    await prisma.localGuide.create({
+      data: guide,
+    });
+  }
   console.log(`Seeding finished.`);
 }
+
+
 
 main()
   .catch((e) => {

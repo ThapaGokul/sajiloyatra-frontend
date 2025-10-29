@@ -44,3 +44,12 @@ model Booking {
   lodgingId  Int
   lodging    Lodging  @relation(fields: [lodgingId], references: [id])
 }
+model LocalGuide {
+  id         Int      @id @default(autoincrement())
+  name       String
+  location   String   // e.g., "Kathmandu", "Pokhara"
+  bio        String
+  imageUrl   String
+  specialty  String   // e.g., "Trekking", "Food Tours", "History"
+  type       String   @default("HOST") 
+}

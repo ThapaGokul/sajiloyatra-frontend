@@ -68,6 +68,7 @@ export default function Header() {
           <Link href="/">Home</Link>
           <Link href="/destinations">Destinations</Link>
           <Link href="/locals">Find a Local</Link>
+          <Link href="/guides">Local Guides</Link>
 
           {/* --- Conditional Auth Links --- */}
           {!isLoading && (

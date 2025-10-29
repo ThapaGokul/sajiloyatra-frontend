@@ -1,0 +1,64 @@
+/* /src/components/BusSearchForm.module.css */
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 800px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Make inputs share space */
+}
+
+.inputGroup label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.input,
+.dateInput {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.searchButton {
+  align-self: flex-end; /* Align with bottom of inputs */
+  padding: 12px 25px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.searchButton:hover {
+  background-color: #0056b3;
+}
+
+/* Make it stack vertically on mobile */
+@media (max-width: 768px) {
+  .searchBox {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .searchButton {
+    align-self: auto;
+  }
+}

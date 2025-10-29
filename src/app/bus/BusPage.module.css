@@ -1,0 +1,7 @@
+/* /src/app/bus/BusPage.module.css */
+
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}

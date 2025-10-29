@@ -1,0 +1,21 @@
+/* /src/app/bus/results/BusResults.module.css */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.resultsHeader {
+  margin-bottom: 20px;
+}
+
+.resultsHeader h1 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.resultsHeader p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 0;
+}
