@@ -57,7 +57,7 @@ export async function POST(request) {
   try {
       await resend.emails.send({
         // This is the line we changed for testing
-        from: 'onboarding@resend.dev', 
+        from: 'booking@sajiloyatra.me', 
         to: guestEmail,
         subject: 'Your Sajilo Yatra Booking is Confirmed!',
         html: `
