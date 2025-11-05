@@ -1,6 +1,6 @@
 // /src/app/booking/fail/page.js
 import Link from 'next/link';
-import styles from './BookingStatus.module.css'; // We'll create this
+import styles from '../BookingStatus.module.css'; // We'll create this
 
 export default function BookingFailPage() {
   return (

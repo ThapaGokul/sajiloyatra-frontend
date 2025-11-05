@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { PrismaClient } from '@prisma/client';
 import { Resend } from 'resend';
 import Link from 'next/link';
-import styles from './BookingStatus.module.css'; // We'll create this
+import styles from '../BookingStatus.module.css'; // We'll create this
 
 const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
