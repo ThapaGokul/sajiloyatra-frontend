@@ -12,8 +12,11 @@
     "clean": "rimraf .next"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^8.9.2",
+    "@tosspayments/payment-widget-sdk": "^0.12.0",
     "@vercel/blob": "^2.0.0",
     "axios": "^1.12.2",
+    "nanoid": "^5.1.6",
     "next": "15.5.4",
     "react": "19.1.0",
     "react-datepicker": "^8.8.0",

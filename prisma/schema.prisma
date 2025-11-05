@@ -39,6 +39,7 @@ model Booking {
   checkOut   DateTime
   guestName  String   // We'll use this instead of a full User model for simplicity
   guestEmail String
+  paymentId  String?
   
   // Relation to Lodging
   lodgingId  Int
