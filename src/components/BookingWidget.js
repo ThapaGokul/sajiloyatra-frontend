@@ -107,9 +107,31 @@ export default function BookingWidget({ lodgingId, lodgingName, lodgingPrice }) 
     <div className={styles.widget}>
       <h3>Book Your Stay</h3>
       
-      {/* --- Your existing form inputs --- */}
       <div className={styles.datePickers}>
-        {/* ... DatePickers for startDate/endDate ... */}
+        <div className={styles.inputGroup}>
+          <label>Check-in</label>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            minDate={new Date()}
+            className={styles.dateInput}
+          />
+        </div>
+        <div className={styles.inputGroup}>
+          <label>Check-out</label>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            className={styles.dateInput}
+          />
+        </div>
       </div>
       <div className={styles.inputGroup}>
         <label htmlFor="guestName">Full Name</label>
