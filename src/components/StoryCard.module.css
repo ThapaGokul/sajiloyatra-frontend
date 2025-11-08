@@ -1,6 +1,6 @@
 /* [CSS MODULE] /src/components/StoryCard.module.css */
 .card {
-  position: relative; /* This is the anchor for the overlay elements */
+  position: relative; 
   width: 350px;
   height: 450px;
   border-radius: 8px;
@@ -8,11 +8,11 @@
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* This pushes the text content to the bottom */
+  justify-content: flex-end; 
   cursor: pointer;
   transition: transform 0.3s ease;
     opacity: 0;
-  transform: translateY(30px); /* Start 30px lower */
+  transform: translateY(30px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 

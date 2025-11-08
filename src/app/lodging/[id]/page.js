@@ -1,5 +1,4 @@
 // /src/app/lodging/[id]/page.js
-import Image from 'next/image';
 import { PrismaClient } from '@prisma/client';
 import styles from './lodgingDetail.module.css';
 import BookingWidget from '../../../components/BookingWidget';

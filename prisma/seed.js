@@ -29,14 +29,6 @@ const guidesData = [
     type: 'PROFESSIONAL'
   },
 ];
-const treksData = [
-  { id: 1, title: 'Everest Base Camp', duration: 14, difficulty: 'Challenging', description: 'The classic trek to the foot of the world\'s highest mountain.' },
-  { id: 2, title: 'Poon Hill', duration: 5, difficulty: 'Easy', description: 'A short and scenic trek with stunning sunrise views of the Annapurnas.' },
-  { id: 3, title: 'Annapurna Circuit', duration: 18, difficulty: 'Hard', description: 'A legendary trek circling the Annapurna massif, offering diverse landscapes.' },
-  { id: 4, title: 'Manaslu Circuit', duration: 16, difficulty: 'Hard', description: 'A remote and challenging trek around the world\'s eighth highest mountain.' },
-  { id: 5, title: 'Gokyo Lakes', duration: 12, difficulty: 'Challenging', description: 'A beautiful alternative to the EBC trek, featuring stunning turquoise lakes.' },
-  { id: 6, title: 'Langtang Valley', duration: 8, difficulty: 'Medium', description: 'An accessible trek through beautiful valleys and Tamang villages.' },
-];
 
 const storiesData = [
   { id: 1, title: 'A Trek Through the Khumbu Valley', author: 'Jane Doe', imageUrl: '/images/story1.jpg' },
@@ -45,26 +37,102 @@ const storiesData = [
 ];
 
 const lodgingsData = [
-  { name: 'Mountain View Inn', description: 'Cozy inn with stunning peak views.', imageUrl: '/images/lodging1.jpg', area: 'Pokhara Lakeside' },
-  { name: 'Riverside Cabins', description: 'Rustic cabins by the serene river.', imageUrl: '/images/lodging2.jpg', area: 'Pokhara Lakeside' },
-  { name: 'Himalayan Grand Hotel', description: 'Luxury accommodation with premium amenities.', imageUrl: '/images/lodging3.jpg', area: 'Kathmandu Valley' },
+  // --- KATHMANDU (from Bagmati Province) ---
+  { 
+    name: 'Kathmandu Marriott Hotel', 
+    description: 'A modern, 5-star hotel in the city center, near Thamel.', 
+    imageUrl: '/images/marriottHotel.avif', 
+    area: 'Kathmandu' // Matches your "Kathmandu" destination
+  },
+  { 
+    name: 'Dwarika\'s Hotel', 
+    description: 'A unique heritage hotel featuring extensive Nepali woodwork.', 
+    imageUrl: '/images/dwarikasHotel.webp', 
+    area: 'Kathmandu' 
+  },
+  
+  // --- POKHARA (covers all 13 Pokhara attractions) ---
+  { 
+    name: 'Hotel Pokhara Grande', 
+    description: 'Luxury hotel with a pool and stunning Annapurna mountain views.', 
+    imageUrl: '/images/pokharaGrande.jpg', 
+    area: 'Pokhara' // This will link to Phewa, Davis Falls, etc.
+  },
+  { 
+    name: 'Temple Tree Resort & Spa', 
+    description: 'A beautiful boutique resort in the heart of Lakeside.', 
+    imageUrl: '/images/templeTreeResort.jpeg', 
+    area: 'Pokhara' 
+  },
+
+  // --- BARDIA (from Lumbini Province) ---
+  { 
+    name: 'Bardia Tiger Resort', 
+    description: 'A jungle lodge offering safaris and nature walks near the park.', 
+    imageUrl: '/images/bardiaTigerResort.jpg', 
+    area: 'Bardia National Park' // Matches your destination
+  },
+
+  // --- TANSEN (from Lumbini Province) ---
+  { 
+    name: 'Horizon Homestay', 
+    description: 'A cozy homestay with a local Newari family in Tansen.', 
+    imageUrl: '/images/horizonHomestay.jpg', 
+    area: 'Tansen' // Matches your "Tansen" destination
+  },
+
+  // --- JANAKPUR (from Madhesh Province) ---
+  { 
+    name: 'Hotel Sita Sharan', 
+    description: 'A comfortable hotel very close to the Janaki Mandir.', 
+    imageUrl: '/images/hotelSitaSharan.jpg', 
+    area: 'Janakpur' // Matches your "Janakpur" destination
+  },
+
+  // --- ILAM (covers Kanyam, Antu Danda, etc.) ---
+  { 
+    name: 'Green View Tea Resort', 
+    description: 'Stay amidst the beautiful tea gardens of Kanyam.', 
+    imageUrl: '/images/hotelGreenView.jpg', 
+    area: 'Ilam' // This will link to Kanyam, Antu Danda...
+  },
+
+  // --- GORKHA (covers Gorkha Durbar, Manakamana) ---
+  { 
+    name: 'Gorkha Gaun Resort', 
+    description: 'Hilltop resort with stunning views of Manaslu and Gorkha Durbar.', 
+    imageUrl: '/images/gorkhaGaunResort.jpg', 
+    area: 'Gorkha' // This will link to Gorkha Durbar, Manakamana
+  },
+
+  // --- BANDIPUR (from Gandaki Province) ---
+  { 
+    name: 'The Old Inn', 
+    description: 'A restored Newari mansion on the main street of Bandipur.', 
+    imageUrl: '/images/theOldInn.jpg', 
+    area: 'Bandipur' // Matches your "Bandipur" destination
+  },
+
+  // --- UPPER MUSTANG (from Gandaki Province) ---
+  { 
+    name: 'Royal Mustang Resort', 
+    description: 'A quality guesthouse in the ancient walled city of Lo Manthang.', 
+    imageUrl: '/images/royalMustangResort.jpg', 
+    area: 'Upper Mustang' // Matches your "Upper Mustang" destination
+  },
+
+  // --- RARA LAKE (from Karnali Province) ---
+  { 
+    name: 'Danphe Lodge', 
+    description: 'A simple, rustic lodge on the pristine shores of Rara Lake.', 
+    imageUrl: '/images/dapheLodge.jpg', 
+    area: 'Rara Lake' // Matches your "Rara Lake" destination
+  }
 ];
 
 
 async function main() {
   console.log(`Start seeding ...`);
-  for (const trek of treksData) {
-    // We use 'create' to add a new record to the 'Trek' table
-    await prisma.trek.create({
-      data: {
-        title: trek.title,
-        duration: trek.duration,
-        difficulty: trek.difficulty,
-        description: trek.description,
-      },
-    });
-  }
-
   // Add this new loop for stories
   for (const story of storiesData) {
     await prisma.story.create({
