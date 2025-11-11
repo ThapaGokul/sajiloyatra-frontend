@@ -15,9 +15,6 @@ export default function DetailModal({ destination, onClose }) {
   // --- State for the lodgings ---
   const [lodgings, setLodgings] = useState([]);
   const [isLoadingLodgings, setIsLoadingLodgings] = useState(true);
-  if (!destination) return null;
-
-  // --- State for the main image carousel ---
 
 
   // Update main image if the destination prop changes
@@ -55,6 +52,8 @@ export default function DetailModal({ destination, onClose }) {
       fetchLodgings();
     }
   }, [destination.name]);
+
+  if (!destination) return null;
 
   return (
     <div 
