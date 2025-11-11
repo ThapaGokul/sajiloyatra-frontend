@@ -1,17 +1,25 @@
 // /src/components/DetailModal.js
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './DetailModal.module.css';
+
 
 export default function DetailModal({ destination, onClose }) {
   if (!destination) return null;
 
+  // --- State for the main image carousel ---
   const [mainImage, setMainImage] = useState(
     (destination.imageUrls && destination.imageUrls.length > 0)
       ? destination.imageUrls[0]
       : `https://placehold.co/600x400/EFEFEF/333?text=${encodeURIComponent(destination.name)}`
   );
 
+  // --- State for the lodgings ---
+  const [lodgings, setLodgings] = useState([]);
+  const [isLoadingLodgings, setIsLoadingLodgings] = useState(true);
+
+  // Update main image if the destination prop changes
   useEffect(() => {
     setMainImage(
       (destination.imageUrls && destination.imageUrls.length > 0)
@@ -19,6 +27,33 @@ export default function DetailModal({ destination, onClose }) {
         : `https://placehold.co/600x400/EFEFEF/333?text=${encodeURIComponent(destination.name)}`
     );
   }, [destination]);
+
+  // Effect to fetch lodgings when the modal opens
+ // --- 2. THIS IS THE UPDATED USEEFFECT ---
+  useEffect(() => {
+    // We now fetch based on destination.name, which links to our 'area' field
+    if (destination.name) {
+      setIsLoadingLodgings(true);
+      
+      async function fetchLodgings() {
+        try {
+          // Fetch from our new Next.js API endpoint
+          const response = await fetch(`/api/lodging/by-area?area=${encodeURIComponent(destination.name)}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch lodgings');
+          }
+          const data = await response.json();
+          setLodgings(data);
+        } catch (error) {
+          console.error(error);
+          setLodgings([]);
+        } finally {
+          setIsLoadingLodgings(false);
+        }
+      }
+      fetchLodgings();
+    }
+  }, [destination.name]);
 
   return (
     <div 
@@ -35,6 +70,7 @@ export default function DetailModal({ destination, onClose }) {
         </div>
         <div className={`${styles.modalBody}`}>
           <div>
+            {/* --- Main Image --- */}
             <Image
               src={mainImage}
               alt="Main destination image"
@@ -42,6 +78,7 @@ export default function DetailModal({ destination, onClose }) {
               height={400}
               className={styles.mainImage}
             />
+            {/* --- Thumbnails --- */}
             <div className={styles.thumbnails}>
               {destination.imageUrls && destination.imageUrls.map((url, index) => (
                 <Image
@@ -57,7 +94,9 @@ export default function DetailModal({ destination, onClose }) {
             </div>
           </div>
           <div className={styles.detailsContent}>
+            {/* --- Description --- */}
             <p className={styles.description}>{destination.longDescription}</p>
+            {/* --- Tags --- */}
             <div>
               <span className={`${styles.tag} ${styles.tagProvince}`}>
                 {destination.province}
@@ -66,6 +105,8 @@ export default function DetailModal({ destination, onClose }) {
                 {destination.category}
               </span>
             </div>
+
+            {/* --- KEY ATTRACTIONS (THIS IS THE RESTORED CODE) --- */}
             <h4 className={styles.attractionsTitle}>Key Attractions</h4>
             <ul className={styles.attractionsList}>
               {destination.keyAttractions && destination.keyAttractions.length > 0 ? (
@@ -76,6 +117,41 @@ export default function DetailModal({ destination, onClose }) {
                 <li>No key attractions listed.</li>
               )}
             </ul>
+            {/* --- END OF RESTORED CODE --- */}
+
+
+            {/* --- RECOMMENDED LODGING --- */}
+           {/* --- 3. UPDATED LODGING SECTION --- */}
+            <h4 className={styles.lodgingTitle}>Recommended Lodging</h4>
+            {isLoadingLodgings ? (
+              <p className={styles.loadingText}>Loading lodgings...</p>
+            ) : lodgings.length > 0 ? (
+              <div className={styles.lodgingList}>
+                {lodgings.map((hotel) => (
+                  // Wrap the card in a Link to our booking page
+                  <Link href={`/lodging/${hotel.id}`} key={hotel.id} className={styles.hotelLink}>
+                    <div className={styles.hotelCard}>
+                      <Image
+                        src={hotel.imageUrl || `https://placehold.co/100x80/EFEFEF/333?text=Hotel`}
+                        alt={hotel.name}
+                        width={100}
+                        height={80}
+                        className={styles.hotelImage}
+                      />
+                      <div className={styles.hotelContent}>
+                        <h5>{hotel.name}</h5>
+                        {/* We use the description from our database */}
+                        <p>{hotel.description}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.loadingText}>No local lodgings found for this destination.</p>
+            )}
+            {/* --- END OF LODGING SECTION --- */}
+
           </div>
         </div>
       </div>

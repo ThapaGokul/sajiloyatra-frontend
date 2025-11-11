@@ -1,26 +1,37 @@
 // /src/components/BookingWidget.js
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from './BookingWidget.module.css';
-
-// --- 1. IMPORT PAYPAL COMPONENTS ---
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { nanoid } from 'nanoid';
+import { useAuth } from '../context/AuthContext';
 
 // 2. Get your Client ID from the .env file
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
-export default function BookingWidget({ lodgingId, lodgingName, lodgingPrice }) {
+export default function BookingWidget({ lodgingId, roomTypeId, lodgingName, lodgingPrice }) {
+
+  const { user, isLoading } = useAuth(); // <-- 3. Get the user
+  const router = useRouter(); // <-- For redirection
+
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
-  const [guestName, setGuestName] =useState("");
-  const [guestEmail, setGuestEmail] = useState("");
+  const [guestName, setGuestName] = useState(user?.name || "");
+  const [guestEmail, setGuestEmail] = useState(user?.email || "");
 
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setGuestName(user.name);
+      setGuestEmail(user.email);
+    }
+  }, [user]);
 
   // This is the price for the booking.
   // In a real app, you'd calculate this based on the number of nights.
@@ -34,6 +45,16 @@ export default function BookingWidget({ lodgingId, lodgingName, lodgingPrice }) 
       setIsError(true);
       return Promise.reject(new Error("Invalid form"));
     }
+
+    if (!user) {
+      setMessage("Please log in to make a booking.");
+      setIsError(true);
+      // Redirect to login page
+      router.push('/login');
+      return Promise.reject(new Error("User not logged in"));
+    }
+
+
 
     setMessage(null); // Clear any old messages
     
@@ -67,6 +88,7 @@ export default function BookingWidget({ lodgingId, lodgingName, lodgingPrice }) 
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             lodgingId: lodgingId,
+            roomTypeId: roomTypeId,
             checkIn: startDate,
             checkOut: endDate,
             guestName: guestName,
@@ -101,6 +123,9 @@ export default function BookingWidget({ lodgingId, lodgingName, lodgingPrice }) 
 
   if (!PAYPAL_CLIENT_ID) {
     return <div>Error: PayPal Client ID is not configured.</div>;
+  }
+  if (isLoading) {
+    return <div className={styles.widget}>Loading...</div>
   }
 
   return (

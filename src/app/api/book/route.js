@@ -2,15 +2,34 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { Resend } from 'resend';
+import jwt from 'jsonwebtoken';     // <-- 1. Import JWT
+import { cookies } from 'next/headers'; // <-- 2. Import Cookies
 
 const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
   try {
+    // --- 3. GET THE LOGGED-IN USER ---
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: 'Not authenticated. Please log in.' }, { status: 401 });
+    }
+
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return NextResponse.json({ error: 'Invalid token.' }, { status: 401 });
+    }
+    
+    const userId = decodedToken.userId; // <-- We get the userId from the token
+
+    // 4. Get the rest of the data from the form
     const body = await request.json();
-    // 'paymentId' is new
-    const { lodgingId, checkIn, checkOut, guestName, guestEmail, paymentId } = body;
+    const { lodgingId, roomTypeId, checkIn, checkOut, guestName, guestEmail, paymentId } = body;
 
     if (!lodgingId || !checkIn || !checkOut || !guestName || !guestEmail) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -28,34 +47,27 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Lodging not found' }, { status: 404 });
     }
     
-    // Save the booking *with* the paymentId
+    // --- 5. SAVE BOOKING WITH THE USER ID ---
     const booking = await prisma.booking.create({
       data: {
         lodgingId: parseInt(lodgingId),
+        roomTypeId: parseInt(roomTypeId),
         checkIn: checkInDate,
         checkOut: checkOutDate,
         guestName: guestName,
         guestEmail: guestEmail,
-        paymentId: paymentId, // <-- ADD THIS
+        paymentId: paymentId,
+        userId: userId, // <-- THIS IS THE FIX
       },
     });
 
-    // Send the confirmation email
+    // 6. Send confirmation email (unchanged)
     try {
       await resend.emails.send({
-        from: 'Sajilo Yatra <booking@sajiloyatra.me>', // Your verified domain
+        from: 'Sajilo Yatra <booking@sajiloyatra.me>',
         to: guestEmail,
         subject: 'Your Sajilo Yatra Booking is Confirmed!',
-        html: `
-          <h1>Booking Confirmed!</h1>
-          <p>Hi ${guestName},</p>
-          <p>Your booking at <strong>${lodging.name}</strong> is confirmed.</p>
-          <ul>
-            <li>Check-in: ${checkInDate.toDateString()}</li>
-            <li>Check-out: ${checkOutDate.toDateString()}</li>
-            <li>Payment ID: ${paymentId}</li>
-          </ul>
-        `
+        html: `Your booking is Confirmed. Thank You! haha` 
       });
     } catch (emailError) {
       console.error("Email failed to send:", emailError);

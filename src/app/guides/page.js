@@ -45,7 +45,7 @@ export default function GuidesPage() {
   return (
     <div>
       <PageHeader
-        imageUrl="/images/guides-hero.jpg" // You'll need a new hero image
+        imageUrl="/images/guide1.jpg" // You'll need a new hero image
         title="Find a Professional Guide"
         description="Hire certified professionals for trekking, tours, and expeditions."
       />

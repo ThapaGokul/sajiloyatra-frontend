@@ -130,6 +130,21 @@
   font-size: 1rem;
   transition: color 0.3s ease;
 }
+.logoutButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.logoutButton:hover {
+  background-color: #0056b3;
+}
 .hamburger {
   display: none;
   background: none;

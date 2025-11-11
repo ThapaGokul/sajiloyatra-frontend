@@ -1,0 +1,127 @@
+/* /src/app/profile/ProfilePage.module.css */
+
+.container {
+  max-width: 900px; /* A clean, single-column layout */
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* --- Tab Navigation --- */
+.tabNav {
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 40px;
+}
+
+.tabButton {
+  padding: 15px 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  color: #333;
+}
+
+.tabActive {
+  color: #007bff; /* Our app's primary blue color */
+  border-bottom-color: #007bff;
+}
+
+.tabContent {
+  /* This is where the content for each tab will appear */
+}
+
+.profileIntro {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* --- Booking List --- */
+.bookingList {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 column */
+  gap: 20px;
+}
+
+.bookingCard {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bookingCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.bookingCard h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.bookingCard p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.bookingCard strong {
+  color: #444;
+}
+
+/* --- Loading / Empty States --- */
+.loading,
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: #888;
+  font-size: 1.1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.emptyContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  font-size: 1.2rem;
+}
+
+.loginLink {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.ctaButton {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 12px 30px;
+  background-color: #007bff; /* Consistent blue button */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.ctaButton:hover {
+  background-color: #0056b3;
+}

@@ -1,50 +1,114 @@
 // /src/app/lodging/[id]/page.js
-import { PrismaClient } from '@prisma/client';
+"use client";
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation'; // <-- Import hooks
+import Image from 'next/image';
+import PageHeader from '../../../components/PageHeader';
+import BookingWidget from '../../../components/BookingWidget'; // <-- We'll use this
 import styles from './lodgingDetail.module.css';
-import BookingWidget from '../../../components/BookingWidget';
-import PageHeader from '../../../components/PageHeader'; // <-- 1. IMPORT THE HEADER
 
-const prisma = new PrismaClient();
+export default function LodgingDetailPage() {
+  const [lodging, setLodging] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // State to manage which room is selected
+  const [selectedRoom, setSelectedRoom] = useState(null); 
+  
+  const params = useParams(); // Get the [id] from the URL
+  const router = useRouter();
+  const { id } = params;
 
-async function getLodging(id) {
-  const lodging = await prisma.lodging.findUnique({
-    where: {
-      id: parseInt(id),
-    },
-  });
-  return lodging;
-}
+  // Fetch data from our new API
+  useEffect(() => {
+    if (id) {
+      async function getLodgingDetails() {
+        try {
+          const response = await fetch(`/api/lodging-details?id=${id}`);
+          if (!response.ok) {
+            throw new Error('Lodging not found');
+          }
+          const data = await response.json();
+          console.log("DATA RECEIVED FROM API:", data);
+          setLodging(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      getLodgingDetails();
+    }
+  }, [id]);
 
-export default async function LodgingDetailPage({ params }) {
-  const lodging = await getLodging(params.id);
+  if (isLoading) {
+    return <div className={styles.loading}>Loading lodging details...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>Error: {error}</div>;
+  }
 
   if (!lodging) {
-    return <p>Lodging not found.</p>;
+    return <div className={styles.error}>Lodging not found.</div>;
   }
 
   return (
-    // We can use a simple <div> here, no specific class needed
     <div>
-      {/* 2. ADD THE PAGE HEADER AT THE TOP */}
       <PageHeader
         imageUrl={lodging.imageUrl}
         title={lodging.name}
-        description={lodging.area} // Use the area as the short description
+        description={lodging.area}
       />
 
-      {/* 3. THIS IS THE CONTENT BELOW THE HEADER */}
       <div className={styles.container}>
-        {/* The image is now in the header, so we remove the old imageContainer */}
+        {/* We can show the main description here */}
+        <p>{lodging.description}</p>
         
-        {/* 4. CLEAN UP THE CONTENT DIV */}
-        <div className={styles.mainContent}>
-          <h2 className={styles.subTitle}>About {lodging.name}</h2>
-          <p className={styles.description}>{lodging.description}</p>
+        <div className={styles.roomList}>
+          <h2>Choose Your Room</h2>
+          {lodging.rooms.map((room) => (
+            <div key={room.id} className={styles.roomCard}>
+              <Image
+                src={room.imageUrls[0]}
+                alt={room.name}
+                width={300}
+                height={200}
+                className={styles.roomImage}
+              />
+              <div className={styles.roomDetails}>
+                <h3>{room.name}</h3>
+                <p>{room.description}</p>
+                <p className={styles.roomGuests}>Max Guests: {room.maxGuests}</p>
+              </div>
+              <div className={styles.bookingBox}>
+                <div className={styles.price}>
+                  Rs. {room.pricePerNight.toLocaleString()}
+                  <span> / night</span>
+                </div>
+                {/* This button will select the room */}
+                <button 
+                  onClick={() => setSelectedRoom(room)} 
+                  className={styles.bookButton}
+                >
+                  Select Room
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-
-        <div className={styles.sidebar}>
-          <BookingWidget lodgingId={lodging.id} />
-        </div>
+        
+        {/* --- This is the new Booking Widget section --- */}
+        {selectedRoom && (
+          <BookingWidget
+            lodgingId={lodging.id}
+            roomTypeId={selectedRoom.id}
+            lodgingName={`${lodging.name} - ${selectedRoom.name}`}
+            lodgingPrice={selectedRoom.pricePerNight}
+            // We'd also pass roomTypeId to the widget here
+          />
+        )}
       </div>
     </div>
   );

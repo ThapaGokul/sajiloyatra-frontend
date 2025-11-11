@@ -1,139 +1,141 @@
+// /src/app/profile/page.js
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import styles from './Profile.module.css';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import Link from 'next/link';
+import Image from 'next/image';
+import styles from './ProfilePage.module.css';
+import PageHeader from '../../components/PageHeader'; // <-- We'll use our header
+import LocalGuideCard from '../../components/LocalGuideCard'; 
 
 export default function ProfilePage() {
-  const { user, isLoading, token } = useAuth();
-  const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  
+  const [bookings, setBookings] = useState([]);
+  const [hostProfile, setHostProfile] = useState(null);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  
+  // --- NEW: State to manage which tab is active ---
+  const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'host'
 
-  const [bio, setBio] = useState("");
-  const [skills, setSkills] = useState("");
-  const [message, setMessage] = useState("");
-  const [isFetching, setIsFetching] = useState(true);
-  const [profilePhoto, setProfilePhoto] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('/images/default-avatar.jpg');
-
-  // Redirect user if not logged in
   useEffect(() => {
-    if (!isLoading && !user) router.push("/login");
-  }, [user, isLoading, router]);
-
-  // Fetch profile data only after token is available
-  useEffect(() => {
-    if (!isLoading && token) {
-      const fetchProfile = async () => {
-        console.log("Fetching profile with token:", token); // DEBUG
-
+    if (user) {
+      async function fetchData() {
+        setIsLoadingData(true);
         try {
-          const response = await axios.get("http://localhost:8080/api/profile/me", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (response.data) {
-            setBio(response.data.bio || "");
-            setSkills(response.data.skills ? response.data.skills.join(", ") : "");
-            if (response.data.profilePhotoUrl) {
-              setPreviewUrl(`http://localhost:8080${response.data.profilePhotoUrl}`);
-            }
-          }
+          const [bookingsRes, hostProfileRes] = await Promise.all([
+            fetch('/api/bookings/me'),
+            fetch('/api/guides/me')
+          ]);
+
+          if (bookingsRes.ok) setBookings(await bookingsRes.json());
+          if (hostProfileRes.ok) setHostProfile(await hostProfileRes.json());
+          
         } catch (error) {
-          if (error.response?.status !== 404) {
-            setMessage("Could not load your profile data.");
-          }
+          console.error("Failed to fetch profile data:", error);
         } finally {
-          setIsFetching(false);
+          setIsLoadingData(false);
         }
-      };
-
-      fetchProfile();
-    } else if (!isLoading && !token) {
-      setIsFetching(false);
-    }
-  }, [token, isLoading]);
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProfilePhoto(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!token) {
-      setMessage("Authentication error. Please log in again.");
-      return;
-    }
-
-    setMessage("");
-    const formData = new FormData();
-    formData.append('bio', bio);
-    formData.append('skills', skills);
-    if (profilePhoto) formData.append('profilePhoto', profilePhoto);
-
-    try {
-      await axios.post("http://localhost:8080/api/profile/update", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      setMessage("Profile updated successfully!");
-    } catch (error) {
-      if (error.response?.status === 403) {
-        setMessage("Permission denied. Your session may have expired. Please log in again.");
-      } else {
-        setMessage(error.response?.data?.message || "Error connecting to the server.");
       }
+      fetchData();
     }
-  };
+  }, [user]);
 
-  if (isLoading || isFetching) {
-    return <div className={styles.loading}><p>Loading profile...</p></div>;
+  // Main loading spinner for auth
+  if (isAuthLoading) {
+    return <div className={styles.loading}>Loading profile...</div>;
   }
 
-  return (
-    <main>
-      <div className={styles.container}>
-        <div className={styles.card}>
-          <div className={styles.header}>
-            <h1>Edit Your Profile</h1>
-            <p>Share your skills and a little about yourself to connect with travelers.</p>
+  // Prompt to log in
+  if (!user) {
+    return (
+      <div className={styles.emptyContainer}>
+        <p>Please <Link href="/login" className={styles.loginLink}>login</Link> to view your profile.</p>
+      </div>
+    );
+  }
+
+  // --- Helper components for each tab ---
+  const BookingsContent = () => {
+    if (isLoadingData) return <div className={styles.loading}>Loading bookings...</div>;
+    if (bookings.length === 0) {
+      return (
+        <div className={styles.emptyState}>
+          <p>You have no bookings yet.</p>
+          <Link href="/lodging" className={styles.ctaButton}>Find a Place to Stay</Link>
+        </div>
+      );
+    }
+    return (
+      <div className={styles.bookingList}>
+        {bookings.map(booking => (
+          <div key={booking.id} className={styles.bookingCard}>
+            <h3>{booking.lodging.name}</h3>
+            <p><strong>Area:</strong> {booking.lodging.area}</p>
+            <p>
+              <strong>Dates:</strong> 
+              {new Date(booking.checkIn).toLocaleDateString()} - 
+              {new Date(booking.checkOut).toLocaleDateString()}
+            </p>
+            <p><strong>Payment ID:</strong> {booking.paymentId}</p>
           </div>
+        ))}
+      </div>
+    );
+  };
 
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.photoSection}>
-              <div className={styles.imagePreview} style={{ backgroundImage: `url(${previewUrl})` }}></div>
-              <label htmlFor="photo-upload" className={styles.fileInputLabel}>Choose Photo</label>
-              <input id="photo-upload" type="file" accept="image/*" className={styles.fileInput} onChange={handlePhotoChange} />
-            </div>
+  const HostProfileContent = () => {
+    if (isLoadingData) return <div className={styles.loading}>Loading host profile...</div>;
+    if (hostProfile) {
+      return (
+        <div>
+          <p className={styles.profileIntro}>This is your public host profile. You can edit this in the future.</p>
+          <LocalGuideCard guide={hostProfile} onContactClick={() => {}} />
+        </div>
+      );
+    }
+    return (
+      <div className={styles.emptyState}>
+        <p>You are not a local host yet.</p>
+        <Link href="/locals/join" className={styles.ctaButton}>
+          Become a Host
+        </Link>
+      </div>
+    );
+  };
 
-            <div>
-              <label htmlFor="bio">Your Bio</label>
-              <textarea id="bio" className={styles.textarea} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell travelers a little about yourself..." />
-            </div>
+  // --- Main Page Render ---
+  return (
+    <>
+      <PageHeader
+        imageUrl="/images/profile-hero.jpg" // You'll need a new hero image
+        title={`Welcome, ${user.name.split(' ')[0]}`}
+        description={`Manage your bookings and host profile all in one place.`}
+      />
 
-            <div>
-              <label htmlFor="skills">Your Skills (comma separated)</label>
-              <input type="text" id="skills" className={styles.input} value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="e.g., Trekking, Cooking, History" />
-            </div>
+      <div className={styles.container}>
+        {/* --- Tab Navigation --- */}
+        <div className={styles.tabNav}>
+          <button
+            className={`${styles.tabButton} ${activeTab === 'bookings' ? styles.tabActive : ''}`}
+            onClick={() => setActiveTab('bookings')}
+          >
+            My Lodging Bookings
+          </button>
+          <button
+            className={`${styles.tabButton} ${activeTab === 'host' ? styles.tabActive : ''}`}
+            onClick={() => setActiveTab('host')}
+          >
+            My Host Profile
+          </button>
+        </div>
 
-            <button type="submit" className={styles.button} disabled={isLoading || !token}>
-              Save Profile
-            </button>
-
-            {message && (
-              <p className={`${styles.message} ${message.includes('success') ? styles.success : styles.error}`}>
-                {message}
-              </p>
-            )}
-          </form>
+        {/* --- Tab Content --- */}
+        <div className={styles.tabContent}>
+          {activeTab === 'bookings' ? <BookingsContent /> : <HostProfileContent />}
         </div>
       </div>
-    </main>
+    </>
   );
 }

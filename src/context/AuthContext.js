@@ -1,67 +1,59 @@
-'use client';
-import React, { createContext, useState, useContext, useEffect } from "react";
-import { useRouter } from "next/navigation";   // 👈 import useRouter
-import axios from "axios";
+// /src/context/AuthContext.js
+"use client";
 
-const AuthContext = createContext();
+import { createContext, useState, useEffect, useContext } from 'react';
+import { useRouter } from 'next/navigation';
+
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter(); // 👈 initialize router
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("userToken");
-      if (storedToken) {
-        setToken(storedToken);
-        // Optional: fetch user info here
-      }
-    }
-  }, []);
-
-  const login = async (email, password) => {
-    setIsLoading(true);
+  // 1. EXTRACT YOUR FETCH LOGIC
+  const fetchUser = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", { email, password });
-      const jwtToken = response.data.token;
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("userToken", jwtToken);
+      const response = await fetch('/api/auth/me');
+      
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      } else {
+        setUser(null);
       }
-
-      setToken(jwtToken);
-      setUser({ email });
-
-      console.log("✅ Login successful. Token saved:", jwtToken);
-
-      // 👇 Redirect to home after successful login
-      router.push("/");
     } catch (error) {
-      console.error("❌ Login failed:", error);
-      throw error;
+      setUser(null);
+      console.error("Error fetching user:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("userToken");
-    }
+  // 2. CALL IT ON PAGE LOAD
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
-    // 👇 Optional: redirect to login page after logout
-    router.push("/login");
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setUser(null);
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
+  // 3. PROVIDE THE 'fetchUser' FUNCTION AS 'refetchUser'
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, logout, refetchUser: fetchUser }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

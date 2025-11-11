@@ -10,13 +10,17 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Our database blueprint for what a "Trek" looks like
-model Trek {
-  id          Int     @id @default(autoincrement())
-  title       String
-  duration    Int
-  difficulty  String
-  description String
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  passwordHash String // We store the hash, never the real password
+  createdAt    DateTime @default(now())
+
+  // --- Define the relationships ---
+  bookings    Booking[]
+  // This creates a one-to-one link: one User can have one Guide profile
+  localGuide  LocalGuide?
 }
 
 model Story {
@@ -32,6 +36,23 @@ model Lodging {
   imageUrl    String
   area        String
   bookings    Booking[]
+  rooms       RoomType[]
+}
+
+model RoomType {
+  id            Int      @id @default(autoincrement())
+  name          String   // e.g., "Deluxe Double Room"
+  description   String
+  pricePerNight Float    // e.g., 5000.00
+  maxGuests     Int      // e.g., 2
+  imageUrls     String[] // A list of photos for this room
+  
+  // Link back to the Lodging
+  lodgingId     Int
+  lodging       Lodging  @relation(fields: [lodgingId], references: [id])
+  
+  // Link to bookings for this room
+  bookings      Booking[]
 }
 model Booking {
   id         Int      @id @default(autoincrement())
@@ -40,10 +61,21 @@ model Booking {
   guestName  String   // We'll use this instead of a full User model for simplicity
   guestEmail String
   paymentId  String?
+
+  // --- NEW: ADD GUEST COUNT ---
+  guestCount Int      @default(1)
   
-  // Relation to Lodging
+  // --- UPDATED: A BOOKING IS NOW FOR A USER... ---
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  
+  // --- ...AND A LODGING... ---
   lodgingId  Int
   lodging    Lodging  @relation(fields: [lodgingId], references: [id])
+  
+  // --- ...AND A SPECIFIC ROOM TYPE ---
+  roomTypeId Int
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id])
 }
 model LocalGuide {
   id         Int      @id @default(autoincrement())
@@ -53,4 +85,10 @@ model LocalGuide {
   imageUrl   String
   specialty  String   // e.g., "Trekking", "Food Tours", "History"
   type       String   @default("HOST") 
+
+  // --- 3. CONNECT GUIDE TO A USER ---
+  // This must be unique to enforce the one-to-one
+  userId     Int      @unique 
+  user       User     @relation(fields: [userId], references: [id])
+
 }

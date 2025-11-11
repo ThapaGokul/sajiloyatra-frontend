@@ -47,7 +47,7 @@ export default function LocalsPage() {
     <div>
       <PageHeader
         imageUrl="/images/locals-hero.jpg"
-        title="Find a Local Guide"
+        title="Find a Local"
         description="Connect with friendly locals for an authentic Nepali experience."
       />
 

@@ -1,74 +1,125 @@
-// [REACT COMPONENT] /src/app/register/page.js
+// /src/app/register/page.js
 "use client";
 
-import { useState } from "react";
-import axios from "axios";
-import { useAuth } from "../../context/AuthContext";
-import styles from '../../app/page.module.css';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import styles from '../auth/AuthForm.module.css'; // Use the shared CSS
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: "", lastName: "", email: "", phoneNumber: "", password: "",
+    name: '',
+    email: '',
+    password: '',
   });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const { login } = useAuth();
+  const [message, setMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-    if (formData.password !== confirmPassword) {
-      setMessage("Passwords do not match!");
+    setMessage(null);
+    setIsError(false);
+
+    if (formData.password.length < 6) {
+      setMessage("Password must be at least 6 characters");
+      setIsError(true);
       return;
     }
+
     try {
-      await axios.post("http://localhost:8080/api/auth/register", formData);
-      setMessage("Registration successful! Logging you in...");
-      await login(formData.email, formData.password);
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setMessage("Registration successful! Redirecting to login...");
+        setIsError(false);
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      } else {
+        const data = await response.json();
+        setMessage(data.error || 'Registration failed');
+        setIsError(true);
+      }
     } catch (error) {
-      setMessage(error.response?.data?.message || "An unexpected error occurred.");
+      console.error("Registration error:", error);
+      setMessage("An unexpected error occurred.");
+      setIsError(true);
     }
   };
 
   return (
-    <main>
-      <div className={styles.container}>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <h2>Create Your Account</h2>
+    <div className={styles.container}>
+      <div className={styles.formWrapper}>
+        <h1 className={styles.title}>Create Account</h1>
+        <form onSubmit={handleSubmit}>
+          {message && (
+            <div className={`${styles.message} ${isError ? styles.error : styles.success}`}>
+              {message}
+            </div>
+          )}
 
-          <div style={{ display: 'flex', gap: '15px', width: '100%' }}>
-            <div style={{ flex: 1 }}>
-              <label htmlFor="firstName">First Name</label>
-              {/* --- Change is on the next line --- */}
-              <input type="text" id="firstName" name="firstName" onChange={handleChange} required style={{ width: '100%' }} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label htmlFor="lastName">Last Name</label>
-              {/* --- Change is on the next line --- */}
-              <input type="text" id="lastName" name="lastName" onChange={handleChange} required style={{ width: '100%' }} />
-            </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              className={styles.input}
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" name="email" onChange={handleChange} required />
+          <div className={styles.inputGroup}>
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className={styles.input}
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <input type="tel" id="phoneNumber" name="phoneNumber" onChange={handleChange} />
+          <div className={styles.inputGroup}>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className={styles.input}
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" name="password" onChange={handleChange} required />
+          <button type="submit" className={styles.button}>
+            Register
+          </button>
 
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" onChange={(e) => setConfirmPassword(e.target.value)} required />
-
-          <button type="submit">Create Account</button>
-          {message && <p style={{ textAlign: "center", marginTop: "15px", color: message.includes('successful') ? 'green' : 'red' }}>{message}</p>}
+          <Link href="/login" className={styles.link}>
+            Already have an account? Login
+          </Link>
         </form>
       </div>
-    </main>
+    </div>
   );
 }

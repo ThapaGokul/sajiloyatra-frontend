@@ -9,7 +9,7 @@ export default function JoinPage() {
   return (
     <div>
       <PageHeader
-        imageUrl="/images/join-hero.jpg" // You'll need to find a hero image
+        imageUrl="/images/local1.jpg" // You'll need to find a hero image
         title="Become a Local Host"
         description="Share your culture, home, and experiences with travelers from around the world."
       />

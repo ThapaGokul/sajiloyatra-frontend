@@ -1,11 +1,14 @@
 // /src/app/api/locals/route.js
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { put } from '@vercel/blob'; // <-- Import Vercel Blob 'put'
+import { put } from '@vercel/blob';
+import { nanoid } from 'nanoid';
+import jwt from 'jsonwebtoken';     // <-- 1. Import JWT
+import { cookies } from 'next/headers'; // <-- 2. Import Cookies
 
 const prisma = new PrismaClient();
 
-// Your GET function is unchanged
+// Your GET function (unchanged)
 export async function GET(request) {
   try {
     const guides = await prisma.localGuide.findMany({
@@ -21,27 +24,43 @@ export async function GET(request) {
 // --- THIS IS THE UPDATED POST FUNCTION ---
 export async function POST(request) {
   try {
-    // 1. We now read FormData instead of JSON
-    const formData = await request.formData();
+    // 3. GET THE LOGGED-IN USER
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: 'Not authenticated. Please log in.' }, { status: 401 });
+    }
+
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return NextResponse.json({ error: 'Invalid token.' }, { status: 401 });
+    }
     
-    // 2. Get the file and text fields from the FormData
+    const userId = decodedToken.userId;
+
+    // 4. GET THE FORM DATA
+    const formData = await request.formData();
     const file = formData.get('imageUrl');
     const name = formData.get('name');
     const location = formData.get('location');
     const specialty = formData.get('specialty');
     const bio = formData.get('bio');
-    const type = formData.get('type');
+    const type = formData.get('type'); // This will be "HOST"
 
     if (!file || !name || !location || !bio || !type || !specialty) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // 3. Upload the file to Vercel Blob
-    const blob = await put(file.name, file, {
+    // 5. UPLOAD THE FILE (unchanged)
+    const uniqueFilename = `${nanoid(8)}-${file.name}`;
+    const blob = await put(uniqueFilename, file, {
       access: 'public',
     });
 
-    // 4. Save the new blob.url to the database
+    // 6. SAVE TO DATABASE (WITH USERID)
     const newGuide = await prisma.localGuide.create({
       data: {
         name,
@@ -49,13 +68,21 @@ export async function POST(request) {
         bio,
         specialty,
         type,
-        imageUrl: blob.url, // <-- We use the URL from Vercel
+        imageUrl: blob.url,
+        userId: userId, // <-- 7. THIS IS THE FIX
       },
     });
 
     return NextResponse.json(newGuide, { status: 201 });
+
   } catch (error) {
     console.error("Failed to create guide:", error);
-    return NextResponse.json({ error: 'Failed to create new guide' }, { status: 500 });
+    // Check for a unique constraint error (if user already has a profile)
+    if (error.code === 'P2002') {
+    return NextResponse.json({ error: 'You already have a host profile.' }, { status: 400 });
   }
+
+  // For all other errors, send a generic 500
+  return NextResponse.json({ error: 'Failed to create new guide' }, { status: 500 });
+}
 }
