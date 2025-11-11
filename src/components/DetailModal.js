@@ -6,9 +6,6 @@ import styles from './DetailModal.module.css';
 
 
 export default function DetailModal({ destination, onClose }) {
-  if (!destination) return null;
-
-  // --- State for the main image carousel ---
   const [mainImage, setMainImage] = useState(
     (destination.imageUrls && destination.imageUrls.length > 0)
       ? destination.imageUrls[0]
@@ -18,6 +15,10 @@ export default function DetailModal({ destination, onClose }) {
   // --- State for the lodgings ---
   const [lodgings, setLodgings] = useState([]);
   const [isLoadingLodgings, setIsLoadingLodgings] = useState(true);
+  if (!destination) return null;
+
+  // --- State for the main image carousel ---
+
 
   // Update main image if the destination prop changes
   useEffect(() => {
