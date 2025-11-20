@@ -1,5 +1,5 @@
 // /src/components/FilterSidebar.js
-import styles from '.FilterSidebar.module.css';
+import styles from './FilterSideBar.module.css';
 
 export default function FilterSidebar({ activeFilters, onFilterChange, availableAreas }) {
   
