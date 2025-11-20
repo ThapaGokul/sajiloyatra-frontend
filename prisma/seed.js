@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
-// We copy our trek data here for the seed script
+
 const guidesData = [
   {
     name: 'Rinzi Sherpa',
@@ -37,7 +37,7 @@ const storiesData = [
   { id: 3, title: 'Monsoon Adventures: A Different Kind of Beauty', author: 'Emily White', imageUrl: '/images/story3.jpg' },
 ];
 
-// We'll create one lodging (Kathmandu Marriott) const lodgingsWithRoomsData = [
+
   const lodgingsWithRoomsData = [
     { 
     name: 'Kathmandu Marriott Hotel', 
@@ -178,7 +178,6 @@ const storiesData = [
 ];
 
 async function main() {
-  // Add this new loop for stories
   for (const story of storiesData) {
     await prisma.story.create({
       data: {
@@ -198,7 +197,7 @@ async function main() {
 
   for (const guide of guidesData) {
     
-    // Create a NEW, unique user for EACH guide
+   
     const dummyUser = await prisma.user.create({
       data: {
         email: `guide${userCounter}@example.com`,
@@ -207,7 +206,6 @@ async function main() {
       },
     });
 
-    // Create the guide and link it to the new user
     await prisma.localGuide.create({
       data: {
         ...guide,

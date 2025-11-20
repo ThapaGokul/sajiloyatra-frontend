@@ -31,18 +31,14 @@ export default function Header() {
   return (
     <header className={headerClassName}>
 
-      {/* 1. The Utility Navigation bar */}
+  
       <div className={styles.utilityNav}>
         <Link href="#">Visitor Guide</Link>
         <Link href="#">Blog</Link>
         <Link href="#">Weather</Link>
       </div>
-
-      {/* 2. The Main Navigation bar */}
       <div className={styles.mainNav}>
-        {/* The Title Link */}
         <Link href="/" className={styles.logo}>
-          {/* The SVG Icon */}
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 20h18L12 4 3 20zm4-4l5-9 5 9H7z" />
           </svg>
@@ -70,11 +66,9 @@ export default function Header() {
           <Link href="/locals">Find a Local</Link>
           <Link href="/guides">Local Guides</Link>
 
-          {/* --- Conditional Auth Links --- */}
           {!isLoading && (
             user ? (
               <>
-                {/* --- Links for Logged-in Users --- */}
                 <Link href="/profile">Profile</Link>
                 <button onClick={logout} className={styles.logoutButton}>Logout</button>
               </>

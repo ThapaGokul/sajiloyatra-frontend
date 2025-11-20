@@ -8,16 +8,13 @@ import FilterSidebar from '../../components/FilterSidebar';
 import styles from './LodgingPage.module.css';
 
 export default function LodgingPage() {
-  // State to hold all lodgings fetched from the API
   const [allLodgings, setAllLodgings] = useState([]);
-  // State to hold the lodgings that are currently visible after filtering
   const [filteredLodgings, setFilteredLodgings] = useState([]);
-   // ADD a state to track which filters are active
+  const [availableAreas, setAvailableAreas] = useState([]);
   const [activeFilters, setActiveFilters] = useState({
-    area: [], // This will store the names of the checked areas, e.g., ['Kathmandu Valley']
+    area: [], 
   });
 
-  // ADD a function to handle changes from the sidebar
   const handleFilterChange = (category, value) => {
     setActiveFilters(prevFilters => {
       const currentValues = prevFilters[category];
@@ -39,7 +36,12 @@ export default function LodgingPage() {
       if (response.ok) {
         const data = await response.json();
         setAllLodgings(data);
-        setFilteredLodgings(data); // Initially, all lodgings are visible
+        setFilteredLodgings(data); 
+
+        const uniqueAreas = [...new Set(data.map(lodging => lodging.area))];
+        uniqueAreas.sort(); 
+        setAvailableAreas(uniqueAreas);
+
       } else {
         console.error("Failed to fetch lodgings");
       }
@@ -76,10 +78,10 @@ export default function LodgingPage() {
             <FilterSidebar
               activeFilters={activeFilters}
               onFilterChange={handleFilterChange}
+              availableAreas={availableAreas}
             />
           </div>
           <div className={styles.resultsGrid}>
-            {/* We now map over the filteredLodgings state variable */}
             {filteredLodgings.map(lodging => (
               <LodgingCard
                 key={lodging.id}
