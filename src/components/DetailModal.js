@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './DetailModal.module.css';
 
-
 export default function DetailModal({ destination, onClose }) {
   const [mainImage, setMainImage] = useState(
     (destination.imageUrls && destination.imageUrls.length > 0)

@@ -10,7 +10,7 @@ import styles from './DestinationsPage.module.css';
 
 // --- CONFIGURATION ---
 // This is your Spring Boot API
-const API_BASE_URL = 'http://localhost:8099';
+const API_BASE_URL = 'process.env.NEXT_PUBLIC_API_URL;';
 // ---
 
 // --- HELPER FUNCTION TO FIX THE ERROR ---
